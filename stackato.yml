@@ -1,0 +1,4 @@
+name: surl
+mem: 64M
+services:
+  ${name}-mdb : mongodb
