@@ -1,9 +1,84 @@
-<html>
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+<style>
+body{text-align:center;}
+.hightlight {
+    border:2px solid #9F1319;
+    background:url(iconCaution.gif) no-repeat 2px
+}
+.loading {
+    float:right; 
+    background:url(ajax-loader.gif) no-repeat 1px; 
+    height:28px; 
+    width:28px; 
+    display:none;
+}
+.done {
+    background:url(iconIdea.gif) no-repeat 2px; 
+    padding-left:20px;
+    font-family:arial;
+    font-size:12px; 
+    width:70%; 
+    margin:20px auto; 
+    display:none
+}
+#lurl {
+    width: 70%;
+}
+</style>
+</head>
 <body>
 <h1>Hello World</h1>
-<form action="">
-  <label>Long URL: </label><input type="text" name="lurl" /><br />
-  <input type="submit" value="Shorten" />
+
+<div class="done"></div>
+
+<form class="form">
+  <label>Long URL: </label><input class="text" type="text" id="lurl" name="lurl" /> 
+  <input type="submit" id="submit" value="Shorten" />
+        <div class="loading"></div>
 </form>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+<script>
+$(document).ready(function() {
+    //if submit button is clicked
+    $('#submit').click(function () {        
+        console.log('submit clicked')
+        //Get the data from all the fields
+        var lurl = $('input[name=lurl]');
+
+        //Simple validation to make sure user entered something
+        //If error found, add hightlight class to the text field
+        if (lurl.val()=='') {
+            lurl.addClass('hightlight');
+            return false;
+        } else lurl.removeClass('hightlight');
+        
+        console.log('validated')
+        
+        //disabled all the text fields
+        $('.text').attr('disabled','true');
+        
+        //show the loading sign
+        $('.loading').show();
+        
+        console.log('loading')
+       
+        $.get('api/'+lurl.val(), function(data) {
+          if (data) {
+              $('.form').fadeOut('slow');                 
+              $('.done').html(data);
+              $('.done').fadeIn('slow');
+          } else { alert('Sorry, unexpected error. Please try again later.'); }
+        }); 
+
+        //cancel the submit button default behaviours
+        return false;
+    }); 
+}); 
+</script>
 </body>
 </html>

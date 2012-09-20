@@ -7,6 +7,8 @@ var url = require('url'),
 /*    host = process.env.VCAP_APP_HOST || 'localhost',
     domain = "http://"+host; */
 
+var keylength=7;
+
 if(process.env.VCAP_APPLICATION) {
   var vcapapp = JSON.parse(process.env.VCAP_APPLICATION);
   var uri = vcapapp['uris'][0];
@@ -27,7 +29,7 @@ app.get('/api/*', function (req, res) {
     return;
   }
   var URL = req.url.slice(5),
-      options = {length: 7};
+      options = {length: keylength};
   short.generate(URL, options, function (error, shortURL) {
     if (error) {
       console.error(error);
@@ -42,6 +44,7 @@ app.get('/api/*', function (req, res) {
 
 
 app.get('/', function(req, res){
+  if (req.url === '/favicon.ico') { return; }
     fs.readFile(__dirname + '/index.html',
       function (err, data) {
         if (err) {
@@ -54,11 +57,11 @@ app.get('/', function(req, res){
       });
 });
 
+app.use(express.static(__dirname + '/static'));
 
-app.get('*', function (req, res) {
-  if (req.url === '/favicon.ico') {
-    return;
-  }
+var re = new RegExp("^\/.{"+keylength+"}$");
+app.get(re, function (req, res) {
+  if (req.url === '/favicon.ico') { return; }
   var visitor = req.connection.remoteAddress,
       hash = req.url.slice(1),
       options = {visitor: visitor};
