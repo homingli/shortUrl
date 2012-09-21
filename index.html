@@ -1,14 +1,16 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<html lang="en">
 <head>
+<link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
 <style>
-body{text-align:center;}
+body {
+    text-align:center;
+    background-color:#000;
+}
 .hightlight {
-    border:2px solid #9F1319;
-    background:url(iconCaution.gif) no-repeat 2px
+    border:2px solid #9f1319 !important;
+    background:url(iconCaution.gif) no-repeat;
+    background-position: right center;
 }
 .loading {
     float:right; 
@@ -18,7 +20,6 @@ body{text-align:center;}
     display:none;
 }
 .done {
-    background:url(iconIdea.gif) no-repeat 2px; 
     padding-left:20px;
     font-family:arial;
     font-size:12px; 
@@ -28,25 +29,50 @@ body{text-align:center;}
 }
 #lurl {
     width: 70%;
+    margin: 10px;
+}
+
+#outer {
+    padding: 5% 0;
+}
+
+#inner {
+    padding: 10% 0;
 }
 </style>
 </head>
 <body>
-<h1>Hello World</h1>
+<div id="outer">
+<div class="hero-unit" id="inner">
 
+<h1>Super Simple URL Shortner</h1>
 <div class="done"></div>
 
+<p>
 <form class="form">
-  <label>Long URL: </label><input class="text" type="text" id="lurl" name="lurl" /> 
-  <input type="submit" id="submit" value="Shorten" />
-        <div class="loading"></div>
+  <input type="button" id="submit" value="Shorten" name="btn" class="btn btn-success" />
+  <input class="text" type="text" id="lurl" name="lurl" placeholder="Paste Long URL Here" />
+  <div class="loading"></div>
 </form>
+</p>
+
+</div>
+</div>
+
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
 <script>
 $(document).ready(function() {
+
+    var debug=false;
+
     //if submit button is clicked
     $('#submit').click(function () {        
-        console.log('submit clicked')
+        if (debug) console.log('submit clicked')
+        var btn = $('input[name=btn]');
+        btn.addClass('disabled');
+        //disabled all the text fields
+        $('.text').attr('disabled','true');
+ 
         //Get the data from all the fields
         var lurl = $('input[name=lurl]');
 
@@ -54,23 +80,21 @@ $(document).ready(function() {
         //If error found, add hightlight class to the text field
         if (lurl.val()=='') {
             lurl.addClass('hightlight');
+            btn.removeClass('disabled');
+            $('.text').removeAttr('disabled');
             return false;
         } else lurl.removeClass('hightlight');
         
-        console.log('validated')
-        
-        //disabled all the text fields
-        $('.text').attr('disabled','true');
-        
+        if (debug) console.log('validated');
+       
         //show the loading sign
         $('.loading').show();
-        
-        console.log('loading')
+        if (debug) console.log('loading');
        
         $.get('api/'+lurl.val(), function(data) {
           if (data) {
-              $('.form').fadeOut('slow');                 
-              $('.done').html(data);
+              $('.form').fadeOut();                 
+              $('.done').html("<h1><a target=\"_blank\" href=\""+data+"\">"+data+"</a></h1>");
               $('.done').fadeIn('slow');
           } else { alert('Sorry, unexpected error. Please try again later.'); }
         }); 
