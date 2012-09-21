@@ -49,8 +49,8 @@ body {
 <div class="done"></div>
 
 <p>
-<form class="form">
-  <input type="button" id="submit" value="Shorten" name="btn" class="btn btn-success" />
+<form class="form" id="form" onsubmit="return shortenurl()">
+  <input type="submit" id="submit" value="Shorten" name="btn" class="btn btn-success" />
   <input class="text" type="text" id="lurl" name="lurl" placeholder="Paste Long URL Here" />
   <div class="loading"></div>
 </form>
@@ -61,48 +61,46 @@ body {
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
 <script>
-$(document).ready(function() {
+     
+function shortenurl(debug) {
 
-    var debug=false;
+    debug = typeof debug !== 'undefined' ? false : true;
 
-    //if submit button is clicked
-    $('#submit').click(function () {        
-        if (debug) console.log('submit clicked')
-        var btn = $('input[name=btn]');
-        btn.addClass('disabled');
-        //disabled all the text fields
-        $('.text').attr('disabled','true');
- 
-        //Get the data from all the fields
-        var lurl = $('input[name=lurl]');
+    if (debug) console.log('submit clicked')
+    var btn = $('input[name=btn]');
+    btn.addClass('disabled');
+    //disabled all the text fields
+    $('.text').attr('disabled','true');
 
-        //Simple validation to make sure user entered something
-        //If error found, add hightlight class to the text field
-        if (lurl.val()=='') {
-            lurl.addClass('hightlight');
-            btn.removeClass('disabled');
-            $('.text').removeAttr('disabled');
-            return false;
-        } else lurl.removeClass('hightlight');
-        
-        if (debug) console.log('validated');
-       
-        //show the loading sign
-        $('.loading').show();
-        if (debug) console.log('loading');
-       
-        $.get('api/'+lurl.val(), function(data) {
-          if (data) {
-              $('.form').fadeOut();                 
-              $('.done').html("<h1><a target=\"_blank\" href=\""+data+"\">"+data+"</a></h1>");
-              $('.done').fadeIn('slow');
-          } else { alert('Sorry, unexpected error. Please try again later.'); }
-        }); 
+    //Get the data from all the fields
+    var lurl = $('input[name=lurl]');
 
-        //cancel the submit button default behaviours
+    //Simple validation to make sure user entered something
+    //If error found, add hightlight class to the text field
+    if (lurl.val()=='') {
+        lurl.addClass('hightlight');
+        btn.removeClass('disabled');
+        $('.text').removeAttr('disabled');
         return false;
+    } else lurl.removeClass('hightlight');
+    
+    if (debug) console.log('validated');
+   
+    //show the loading sign
+    $('.loading').show();
+    if (debug) console.log('loading');
+   
+    $.get('api/'+lurl.val(), function(data) {
+      if (data) {
+          $('.form').fadeOut();                 
+          $('.done').html("<h1><a target=\"_blank\" href=\""+data+"\">"+data+"</a></h1>");
+          $('.done').fadeIn('slow');
+      } else { alert('Sorry, unexpected error. Please try again later.'); }
     }); 
-}); 
+
+    //cancel the submit button default behaviours
+    return false;
+}; 
 </script>
 </body>
 </html>
