@@ -64,7 +64,7 @@ body {
      
 function shortenurl(debug) {
 
-    debug = typeof debug !== 'undefined' ? false : true;
+    debug = typeof debug === 'undefined' ? false : debug;
 
     if (debug) console.log('submit clicked')
     var btn = $('input[name=btn]');
