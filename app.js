@@ -8,11 +8,13 @@ var url = require('url'),
     domain = "http://"+host; */
 
 var keylength=7;
+var uri = "localhost";
 
 if(process.env.VCAP_APPLICATION) {
   var vcapapp = JSON.parse(process.env.VCAP_APPLICATION);
-  var uri = vcapapp['uris'][0];
+  uri = vcapapp['uris'][0];
 }
+
 
 if(process.env.VCAP_SERVICES){
   var services = JSON.parse(process.env.VCAP_SERVICES);
@@ -35,7 +37,7 @@ app.get('/api/*', function (req, res) {
       console.error(error);
     }
     else {
-      var tinyUrl = ["https://",uri, "/", shortURL.hash].join("");
+      var tinyUrl = (uri == "localhost") ? ["https://",uri, ":",port, "/", shortURL.hash].join("") : ["https://",uri, "/", shortURL.hash].join("");
       console.log(["URL is ", shortURL.URL, " ", tinyUrl].join(""));
       res.end(tinyUrl);
     }
