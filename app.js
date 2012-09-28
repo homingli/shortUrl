@@ -30,13 +30,12 @@ app.get('/api/*', function (req, res) {
   if (req.url === '/favicon.ico') {
     return;
   }
-  var URL = req.url.slice(5),
-      options = {length: keylength};
-  short.generate(URL, options, function (error, shortURL) {
+  var options = {length: keylength};
+  // short parses url without protocol
+  short.generate(encodeURIComponent(req.url.slice(5)), options, function (error, shortURL) {
     if (error) {
       console.error(error);
-    }
-    else {
+    } else {
       var tinyUrl = (uri == "localhost") ? ["https://",uri, ":",port, "/", shortURL.hash].join("") : ["https://",uri, "/", shortURL.hash].join("");
       console.log(["URL is ", shortURL.URL, " ", tinyUrl].join(""));
       res.end(tinyUrl);
@@ -71,7 +70,10 @@ app.get(re, function (req, res) {
     if (error) {console.error(error);
     } else {
       if (shortURLObject) {
-        res.redirect(shortURLObject.URL, 302);
+        var URL = decodeURIComponent(shortURLObject.URL)
+        if (!URL.match(/^https?:\/\//))
+            URL = ["https://",URL].join("");
+        res.redirect(URL, 302);
       }
       else {
         res.send('URL not found!', 404);
